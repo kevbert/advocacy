@@ -10,7 +10,7 @@ st.title("Advocacy Home")
 # add logo file "TextBotLogoSmall.jpeg" to sidebar
 st.logo("TextBotLogoSmall.jpeg")
 
-st.sidebar.success("Welcome")
+st.sidebar.success("Reference Materials Loaded")
 
 ai_url = "https://openai.com"
 current_document = "CMS Document Long <NONE>"
@@ -20,8 +20,8 @@ st.session_state["current_document"] = current_document
 st.session_state["current_document_url"] = current_document_url
 
 #display current materials
-st.write("Current Document: ", current_document)
-st.link_button("View Document", current_document_url)
+st.sidebar.write("Current Document: ", current_document)
+st.sidebar.link_button("View Document", current_document_url)
 
 if "user_interest" not in st.session_state:
     st.session_state["user_interest"] = ""

@@ -9,6 +9,9 @@ st.markdown("# Submit")
 st.sidebar.header("Submit")
 st.logo("TextBotLogoSmall.jpeg")
 
+st.sidebar.write("Current Document: ", st.session_state["current_document"])
+st.sidebar.link_button("View Document", st.session_state["current_document_url"])
+
 st.divider()
 
 st.write("Done!")

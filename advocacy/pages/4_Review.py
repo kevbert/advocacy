@@ -11,8 +11,8 @@ st.logo("TextBotLogoSmall.jpeg")
 
 st.divider()
 
-st.write("Current Document: ", st.session_state["current_document"])
-st.link_button("View Document", st.session_state["current_document_url"])
+st.sidebar.write("Current Document: ", st.session_state["current_document"])
+st.sidebar.link_button("View Document", st.session_state["current_document_url"])
 
 st.divider()
 
