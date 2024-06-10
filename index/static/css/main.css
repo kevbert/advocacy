@@ -1,0 +1,24 @@
+body
+{
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f1f1f1;
+    margin: 0;
+    padding: 0;
+}
+
+div#main
+{
+    max-width: 950px;
+    height: 100vh;
+    padding-left: .5em;
+    padding-right: .5em;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #fefefe;
+}
+
+div#main h1
+{
+    margin: 0;
+    padding: 0;
+}
