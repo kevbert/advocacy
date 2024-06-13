@@ -26,20 +26,19 @@ st.logo("TextBotLogoSmall.jpeg")
 import os
 from dotenv import load_dotenv
 load_dotenv()
-from dotenv import load_dotenv
-import os
-
-load_dotenv(os.path.join(".", ".env"))
 
 #set up OpenAI API stuff
 # Access the API key from the environment
 api_key = os.getenv("ADVOCACY_OPENAI_API_KEY")
 # connect to LLM Assistant API
 client = OpenAI(api_key=api_key)
+st.session_state["client"] = client
 #fetch assistant
 assistant = client.beta.assistants.retrieve("asst_NKfcLtfzuj3uCPa1cDlNNlTy")
+st.session_state["assistant"] = assistant
 #create a thread for this session
 thread = client.beta.threads.create()
+st.session_state["thread"] = thread
 
 #start with a simple message to get basic info and assure connection
 #initial info message on thread
@@ -60,10 +59,12 @@ while run.status != "completed":
 st.sidebar.success("Assistant Connected")
 
 messages = client.beta.threads.messages.list(thread_id=thread.id)
+#filter for assistant messages
+assistant_messages = [message for message in messages.data if message.role == "assistant"]
 #print content all messages in main window
-for message in messages.data:
-    st.write(f"{message.role} ({message.id}): {message.content[0].text.value}")
-
+for message in assistant_messages:
+    # st.write(f"{message.role} ({message.id}): {message.content[0].text.value}")
+    st.write(f"{message.content[0].text.value}")
 
 ai_url = "https://openai.com"
 current_document = "CMS Document Long <NONE>"
