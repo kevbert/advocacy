@@ -3,6 +3,7 @@ from openai import OpenAI
 import threading
 import time
 
+#TODO: move this to a utility file
 @st.cache_data   #TODO check if this caching is working
 def run_thread(thread_id, assistant_id, _client):
     run = client.beta.threads.runs.create_and_poll(
@@ -32,39 +33,52 @@ load_dotenv()
 api_key = os.getenv("ADVOCACY_OPENAI_API_KEY")
 # connect to LLM Assistant API
 client = OpenAI(api_key=api_key)
-st.session_state["client"] = client
+#store for other pages in this app
+if 'client' not in st.session_state:
+    st.session_state["client"] = client
+
 #fetch assistant
 assistant = client.beta.assistants.retrieve("asst_NKfcLtfzuj3uCPa1cDlNNlTy")
-st.session_state["assistant"] = assistant
+if 'assistant' not in st.session_state:
+    st.session_state["assistant"] = assistant
+    
 #create a thread for this session
 thread = client.beta.threads.create()
-st.session_state["thread"] = thread
+if 'thread' not in st.session_state:
+    st.session_state["thread"] = thread
 
-#start with a simple message to get basic info and assure connection
-#initial info message on thread
-message = client.beta.threads.messages.create(
-  thread_id=thread.id,
-  role="user",
-  content="What is the agency, title, and due date for comments on this call? Example response: '''CMS, CY 2023 Physician Fee Schedule, comments due September 30, 2022.'''" 
-)
-# run thread on assistant
-run = run_thread(thread.id, assistant.id, client)
-# Poll for task completion
-while run.status != "completed":
-    #show status in sidebar
-    st.sidebar.info(f"Task status: {run.status}")
-    time.sleep(1)  # Adjust polling interval as needed
-    #TODO: should check timeout and errors
+#get summary intro message if it's not already here
+if 'intro_message' not in st.session_state:
+    #start with a simple message to get basic info and assure connection
+    #initial info message on thread
+    message = client.beta.threads.messages.create(
+    thread_id=thread.id,
+    role="user",
+    content="What is the agency, title, and due date for comments on this call? Example response: '''CMS, CY 2023 Physician Fee Schedule, comments due September 30, 2022.'''" 
+    )
+    # run thread on assistant
+    run = run_thread(thread.id, assistant.id, client)
+    # Poll for task completion
+    while run.status != "completed":
+        #show status in sidebar
+        st.sidebar.info(f"Task status: {run.status}")
+        time.sleep(1)  # Adjust polling interval as needed
+        #TODO: should check timeout and errors
 
-st.sidebar.success("Assistant Connected")
+    st.sidebar.success("Assistant Connected")
 
-messages = client.beta.threads.messages.list(thread_id=thread.id)
-#filter for assistant messages
-assistant_messages = [message for message in messages.data if message.role == "assistant"]
-#print content all messages in main window
-for message in assistant_messages:
-    # st.write(f"{message.role} ({message.id}): {message.content[0].text.value}")
-    st.write(f"{message.content[0].text.value}")
+    messages = client.beta.threads.messages.list(thread_id=thread.id)
+    #filter for assistant messages
+    assistant_messages = [message for message in messages.data if message.role == "assistant"]
+    # save intro message
+    st.session_state["intro_message"] = assistant_messages[0].content[0].text.value
+    #save last message id in session state
+    last_message_id = assistant_messages[0].id
+    last_message_id = message.id
+    st.write(f"Last message id: {last_message_id}")
+    st.session_state["last_message_id"] = last_message_id
+
+st.write("Intro message: ", st.session_state["intro_message"])
 
 ai_url = "https://openai.com"
 current_document = "CMS Document Long <NONE>"
