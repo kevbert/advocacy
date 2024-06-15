@@ -38,8 +38,8 @@ next = st.button("Review Comment")
 
 if previous:
     st.session_state["user_comment"] = user_comment
-    st.switch_page("pages/2_AI_Summary.py")
+    st.switch_page("pages/3_Summary.py")
 
 if next:
     st.session_state["user_comment"] = user_comment
-    st.switch_page("pages/4_Review.py")
+    st.switch_page("pages/5_Review.py")

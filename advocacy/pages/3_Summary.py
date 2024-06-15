@@ -6,12 +6,12 @@ import time
 from utils import run_thread
 
 st.set_page_config(
-    page_title="Choose",
+    page_title="Summary",
     page_icon="🩺",
 )
 
-st.markdown("# Choose")
-st.sidebar.header("Choose")
+st.markdown("# Summary")
+st.sidebar.header("Summary")
 st.logo("TextBotLogoSmall.jpeg")
 
 st.divider()
@@ -94,8 +94,8 @@ next = st.button("Review Comment")
 
 if previous:
     st.session_state["user_comment"] = user_comment
-    st.switch_page("pages/2_AI_Summary.py")
+    st.switch_page("pages/2_Choose.py")
 
 if next:
     st.session_state["user_comment"] = user_comment
-    st.switch_page("pages/3_Comment.py")
+    st.switch_page("pages/4_Comment.py")

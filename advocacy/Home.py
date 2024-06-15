@@ -134,7 +134,7 @@ user_role = st.selectbox(
    ("Advocate", "Community Member", "Researcher", "Practitioner")
 )
 
-user_interest = st.text_area("Describe your interests, expertise, or subject area:", st.session_state["user_interest"], height=300)
+user_interest = st.text_area("Describe your interests, expertise, or subject area:", st.session_state["user_interest"], height=300, placeholder="Enter your work, interests, experience or research here")
 
 go_ai = st.button("Go")
 if go_ai:
@@ -142,7 +142,7 @@ if go_ai:
     st.session_state["user_role"] = user_role
     # erase the next variable so they can be reloaded
     st.session_state["dis_message"] = ""
-    st.switch_page("pages/2_AI_Summary.py")
+    st.switch_page("pages/2_Choose.py")
 
 #a reset button that erases state for user_interest, user_role, intro_message, and last_message_id
 reset = st.button("Reset")

@@ -6,12 +6,12 @@ import time
 from utils import run_thread, reset_values
 
 st.set_page_config(
-    page_title="Summary",
+    page_title="Choose",
     page_icon="🩺",
 )
 
-st.markdown("# AI Summary")
-st.sidebar.header("AI Summary")
+st.markdown("# Choose")
+st.sidebar.header("Choose")
 st.logo("TextBotLogoSmall.jpeg")
 
 st.divider()
@@ -87,4 +87,4 @@ if previous:
 
 if next:
     st.session_state["user_choice"] = user_choice
-    st.switch_page("pages/3_Choose.py")
+    st.switch_page("pages/3_Summary.py")

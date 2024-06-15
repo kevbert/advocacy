@@ -30,7 +30,7 @@ previous = st.button("Cancel")
 next = st.button("Submit Comment")
 
 if previous:
-    st.switch_page("pages/3_Comment.py")
+    st.switch_page("pages/4_Comment.py")
 
 if next:
-    st.switch_page("pages/5_Submit.py")
+    st.switch_page("pages/6_Submit.py")
