@@ -76,25 +76,12 @@ if 'intro_message' not in st.session_state or st.session_state["intro_message"] 
     message = client.beta.threads.messages.create(
     thread_id=thread.id,
     role="user",
-    content="""Your task is to gather  information from the documents and report it back in a specified format. Below is an example format for your reference:
-
-    Example Format:
-    '''
-    Agency: CMS
+    content="""What is the agency, title, and due date for comments on this call? 
+    Example response: 
+    '''Agency: CMS
     Title: CY 2023 Physician Fee Schedule
-    comments due September 30, 2022.
-    '''
-
-    Please replace the placeholders in the example format with the actual information from the documents. Do not return the example format. Instead, use it as a guide to structure your response.
-
-    User Prompt: "What is the agency, title, and due date for comments?"
-
-    Your Response:
-    '''
-    Agency: [Actual Agency]
-    Title: [Actual Title]
-    comments due [Actual Due Date].
-    '''"""
+    Comments: comments due September 30, 2022.'''
+   """
 
     #TODO: get title and due date from API rather than the LLM
     )

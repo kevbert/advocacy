@@ -13,7 +13,6 @@ st.divider()
 
 def clear_text():
     st.session_state["user_comment"] = ""
-    st.session_state["comment_box"] = ""
 
 st.sidebar.write("Current Document: ", st.session_state["current_document"])
 st.sidebar.link_button("View Document", st.session_state["current_document_url"])
@@ -25,7 +24,7 @@ st.write("User role:", st.session_state["user_role"])
 
 st.divider()
 
-st.write("AI Summary goes here.")
+st.write(f"{st.session_state.guidance}")
 
 if "user_comment" not in st.session_state:
     st.session_state["user_comment"] = ""
