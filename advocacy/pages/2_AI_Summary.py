@@ -75,10 +75,16 @@ if 'dis_message' not in st.session_state or st.session_state["dis_message"] == "
 
 st.write(st.session_state["dis_message"])
 
-next = st.button("Make Comment")
+if "user_choice" not in st.session_state:
+    st.session_state["user_choice"] = ""
+
+user_choice = st.text_area("What area would you like to dig into?", st.session_state["user_choice"], height=100, placeholder="Nunmerical value of the area you are interested in or name an area")
+
+next = st.button("Choose")
 
 if previous:
     st.switch_page("Home.py")
 
 if next:
-    st.switch_page("pages/3_Comment.py")
+    st.session_state["user_choice"] = user_choice
+    st.switch_page("pages/3_Choose.py")
