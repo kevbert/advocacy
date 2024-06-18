@@ -87,4 +87,5 @@ if previous:
 
 if next:
     st.session_state["user_choice"] = user_choice
+    st.session_state["guidance"] = ""
     st.switch_page("pages/3_Summary.py")

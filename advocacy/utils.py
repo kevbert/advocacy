@@ -14,8 +14,9 @@ def reset_values():
     st.session_state["user_role"] = ""
     st.session_state["intro_message"] = ""
     st.session_state["dis_message"] = ""
-    st.session_state["guidance_message"] = ""
+    st.session_state["guidance"] = ""
     st.session_state["comment"] = ""
+    st.session_state["review"] = ""
     st.session_state["last_message_id"] = ""
     st.session_state["thread"] = ""
     st.switch_page("Home.py")

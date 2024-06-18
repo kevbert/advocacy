@@ -56,7 +56,8 @@ else:
 
 if 'assistant' not in st.session_state:
     #fetch assistant
-    assistant = client.beta.assistants.retrieve("asst_NKfcLtfzuj3uCPa1cDlNNlTy")
+    assistant = client.beta.assistants.retrieve("asst_NKfcLtfzuj3uCPa1cDlNNlTy")   #gpt 4, temperature .1, Long original document
+    # assistant = client.beta.assistants.retrieve("asst_qM2xHQ1uBPocEnkpw3Jq4qhS")   #gpt 4, temperature .1, SNF document
     st.session_state["assistant"] = assistant
 else:
     assistant = st.session_state["assistant"]
@@ -101,15 +102,15 @@ if 'intro_message' not in st.session_state or st.session_state["intro_message"] 
     #filter for assistant messages
     assistant_messages = [message for message in messages.data if message.role == "assistant"]
     # save intro message
-    st.session_state["intro_message"] = assistant_messages[0].content[0].text.value
+    st.session_state["intro_message"] = assistant_messages[0]
     #save last message id in session state
     last_message_id = assistant_messages[0].id
     st.session_state["last_message_id"] = last_message_id
 
-st.write(st.session_state["intro_message"])
+st.write(st.session_state["intro_message"].content[0].text.value)
 
 #for debugging and monitoring
-st.sidebar.write(f"Last message id: {st.session_state.last_message_id}")
+st.sidebar.write(f"Message annotations: {st.session_state.intro_message.content[0].text.annotations}")
 
 if "user_interest" not in st.session_state:
     st.session_state["user_interest"] = ""
