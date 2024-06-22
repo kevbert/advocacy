@@ -36,10 +36,13 @@ st.divider()
 # get new dis_message if it isn't already in session state or blank
 if 'dis_message' not in st.session_state or st.session_state["dis_message"] == "":
     #get AI response for user role and interest
-    ai_prompt = f"I am a {st.session_state["user_role"]}. My interests are: {st.session_state["user_interest"]}."
-    specific_instructions = """ Extract and summarize relevant parts of the documents.
-                Review the document. There are many different topics covered in the document. Decide if each topic is relevant to the user. If it is relevant, write it out a title and a brief summary of less than 5 words. Here is an example: Diabetes Management: strategies for managing diabetes
-                Then ask the user which of the topics they are interested in"""
+    ai_prompt = f"I am a {st.session_state['user_role']}. My interests are: {st.session_state['user_interest']}."
+    specific_instructions = """
+Extract and summarize relevant parts of the document. Identify topics that match the user's role and interests. For each relevant topic, provide a title and a brief summary (less than 5 words). 
+Example: Diabetes Management: strategies for managing diabetes.
+Then, ask the user to select their topic of interest.
+"""
+
 
     message = client.beta.threads.messages.create(
     thread_id=thread.id,

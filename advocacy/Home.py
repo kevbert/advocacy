@@ -79,9 +79,9 @@ if 'intro_message' not in st.session_state or st.session_state["intro_message"] 
     role="user",
     content="""What is the agency, title, and due date for comments on this call? 
     Example response: 
-    '''Agency: CMS
-    Title: CY 2023 Physician Fee Schedule
-    Comments: comments due September 30, 2022.'''
+    '''**Agency:** CMS
+    **Title:** CY 2023 Physician Fee Schedule
+    **Comments:** comments due September 30, 2022.'''
    """
 
     #TODO: get title and due date from API rather than the LLM

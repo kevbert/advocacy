@@ -43,16 +43,21 @@ st.divider()
 # get new guidance if it isn't already in session state or blank
 if 'guidance' not in st.session_state or st.session_state["guidance"] == "":
     #get AI response for user choice
-    ai_prompt = f"{st.session_state["user_choice"]}."
-    specific_instructions = """ find the topic that the user indicated, and prepare a summary of the information on that topic from the document. Include these sections: 
-Proposed Changes: Summarize the proposed changes in this area.
-Comment Source: Identify where the comment originated (e.g., public submissions, surveys, direct feedback).
-Specific Issues Addressed: Highlight the main issues mentioned in each comment.
-Evidence and Data: Look for comments supported by data, personal experiences, or expert opinions.
-Suggested Alternatives: Note any alternative solutions or recommendations provided in the comments.
-Impact Statements: Identify how the proposed rule or policy changes would impact the commenters and their communities.
-Write everything at an 8th grade literacy level. Don't tell the user that you have made the language simpler.
+    ai_prompt = f"{st.session_state['user_choice']}."
+    specific_instructions = """
+Find the selected topic and prepare a summary including:
+- **Proposed Changes:** Summarize the changes.
+- **Comment Source:** Origin of the comment (e.g., public submissions, surveys).
+- **Specific Issues Addressed:** Main issues mentioned.
+- **Evidence and Data:** Data or expert opinions supporting the comment.
+- **Suggested Alternatives:** Alternative solutions or recommendations.
+- **Impact Statements:** How the changes would impact the commenters and their communities. Impacts on commenters should include time and effort required to comply with the changes.
+
+For each section, include a direct quote from the material. When including quotes from the document, ensure they are directly extracted. Do not paraphrase or generate quotes. If a direct quote cannot be found, clearly state that no direct quote is available.
+
+Write everything at an 8th grade literacy level.
 """
+
 
     message = client.beta.threads.messages.create(
     thread_id=thread.id,
