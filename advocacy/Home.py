@@ -11,23 +11,30 @@ st.set_page_config(
     page_icon="🩺",
 )
 
-st.title("Advocacy Home")
+# put an image in top of the page, centered
+st.columns(3)[1].image("CGLogoDNA.png", width=200)
 
-# add logo file "TextBotLogoSmall.jpeg" to sidebar
-st.logo("TextBotLogoSmall.jpeg")
+st.logo("CGLogoDNAsmall.png")
+
+st.title("Advocacy Home")
 
 #these are currently mockups
 ai_url = "https://openai.com"
-current_document = "CMS Long Document Long"
-current_document_url = "https://cms.gov"
+#could read these form Gov API
+current_document = "CMS-2024-0131-0001"
+current_document_url = "https://downloads.regulations.gov/CMS-2024-0131-0001/content.pdf"
+comment_start = "April 10, 2024"
+comment_end = "May 3, 2024"
+#could extract this from the document somehow? Not in API
+document_title = "Medicare and Medicaid Programs and the Children’s Health Insurance Program; Hospital Inpatient Prospective Payment Systems for Acute Care Hospitals and the Long-Term Care Hospital Prospective Payment System and Policy Changes and Fiscal Year 2025 Rates; Quality Programs Requirements; and Other Policy Changes"
 
 #set these in state
 st.session_state["current_document"] = current_document
 st.session_state["current_document_url"] = current_document_url
 
 #display current materials
-st.sidebar.write("Current Document: ", current_document)
-st.sidebar.link_button("View Document", current_document_url)
+st.sidebar.write("Current Document:", current_document)
+st.sidebar.link_button("Download Document", current_document_url)
 
 if 'api_key' not in st.session_state:
     # get OPENAI_API_KEY from .env file
@@ -77,11 +84,9 @@ if 'intro_message' not in st.session_state or st.session_state["intro_message"] 
     message = client.beta.threads.messages.create(
     thread_id=thread.id,
     role="user",
-    content="""What is the agency, title, and due date for comments on this call? 
+    content="""What is the title of this document? 
     Example response: 
-    '''**Agency:** CMS
-    **Title:** CY 2023 Physician Fee Schedule
-    **Comments:** comments due September 30, 2022.'''
+    '''**Title:** <document title>
    """
 
     #TODO: get title and due date from API rather than the LLM
@@ -107,10 +112,16 @@ if 'intro_message' not in st.session_state or st.session_state["intro_message"] 
     last_message_id = assistant_messages[0].id
     st.session_state["last_message_id"] = last_message_id
 
-st.write(st.session_state["intro_message"].content[0].text.value)
+st.write("Welcome to the Advocacy Assistant! Let's get started.")
+st.write("Current Document:", current_document)
+st.write("Title:", document_title)
+st.write("Comment period:", comment_start, "to", comment_end)
+st.divider()
+st.write("I can scan the document and help you find the information that is most relevant to you. Please provide some information about yourself and your interests.")
+
 
 #for debugging and monitoring
-st.sidebar.write(f"Message annotations: {st.session_state.intro_message.content[0].text.annotations}")
+#st.sidebar.write(f"Message annotations: {st.session_state.intro_message.content[0].text.annotations}")
 
 if "user_interest" not in st.session_state:
     st.session_state["user_interest"] = ""
@@ -119,10 +130,10 @@ if "user_role" not in st.session_state:
 
 user_role = st.selectbox(
    "Select your role:",
-   ("Advocate", "Community Member", "Researcher", "Practitioner")
+   ("Advocate", "Community Member", "Researcher", "Practitioner", "Other (specify below)")
 )
 
-user_interest = st.text_area("Describe your interests, expertise, or subject area:", st.session_state["user_interest"], height=300, placeholder="Enter your work, interests, experience or research here")
+user_interest = st.text_area("Describe your interests, expertise, or subject area:", st.session_state["user_interest"], height=150, placeholder="Enter your work, interests, experience or research here")
 
 go_ai = st.button("Go")
 if go_ai:
