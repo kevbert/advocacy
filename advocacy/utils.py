@@ -4,6 +4,7 @@ import time
 import pymongo
 from openai import AzureOpenAI
 import json
+import requests
 
 def reset_values():
     st.session_state["user_interest"] = ""
@@ -54,6 +55,7 @@ def vector_search(collection_name, query, num_results=3):
         {'$project': { 'similarityScore': { '$meta': 'searchScore' }, 'document' : '$$ROOT' } }
     ]
     results = collection.aggregate(pipeline)
+    st.session_state["debug"] = [result for result in results]
     return results
 
 def print_chunk_search_result(result):
@@ -95,3 +97,16 @@ def rag_with_vector_search(question: str, num_results: int = 3):
     #add to the thread
     st.session_state["thread"].append({"role":completion.choices[0].message.role, "content":completion.choices[0].message.content})
     return completion.choices[0].message.content
+
+#function to submit a comment to api.regulations.gov/v4/comments
+def submit_comment(comment):
+    url = "https://api.regulations.gov/v4/comments/CMS-2024-0131-0001"
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "X-Api-Key": "YOUR_API_KEY"}
+    # GET the comment return - to activate this endpoint, we would use a POST with the comment
+    response = requests.get(url, headers=headers)
+    # return data.attributes.docketId
+    return response.json()["data"]["attributes"]["docketId"]
+

@@ -10,6 +10,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# spot to stick debug stuff
+st.session_state["debug"] = ""
+
 #set up Azure stuff
 CONNECTION_STRING = os.environ.get("DB_CONNECTION_STRING")
 db_client = pymongo.MongoClient(CONNECTION_STRING)
@@ -130,3 +133,6 @@ if go_ai:
 reset = st.button("Reset")
 if reset:
     reset_values()
+
+st.divider()
+st.write(st.session_state["debug"])

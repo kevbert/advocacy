@@ -38,7 +38,7 @@ if 'dis_message' not in st.session_state or st.session_state["dis_message"] == "
     #get AI response for user role and interest
     ai_prompt = f"I am a {st.session_state['user_role']}. My interests are: {st.session_state['user_interest']}."
     specific_instructions = """
-Extract and summarize relevant parts of the document. Identify topics that match the user's role and interests. For each relevant topic, provide a title and a brief summary (less than 5 words). 
+Identify topics that match the user's role and interests. For each relevant topic, provide a title and a brief summary (less than 5 words). 
 Example: Diabetes Management: strategies for managing diabetes.
 Then, ask the user to select their topic of interest.
 """
@@ -67,3 +67,7 @@ if next:
     st.session_state["user_choice"] = user_choice
     st.session_state["guidance"] = ""
     st.switch_page("pages/3_Summary.py")
+
+
+st.divider()
+st.write(st.session_state["debug"])
