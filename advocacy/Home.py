@@ -1,28 +1,27 @@
 import streamlit as st
-from openai import OpenAI
-import threading
 import time
 import os
 import json
 import pymongo
 
-from utils import run_thread, reset_values, generate_embeddings, vector_search, print_chunk_search_result
+from utils import reset_values, generate_embeddings, vector_search, print_chunk_search_result,rag_with_vector_search
 from openai import AzureOpenAI
 from dotenv import load_dotenv
-from tenacity import retry, wait_random_exponential, stop_after_attempt
 
-from dotenv import load_dotenv
 load_dotenv()
 
 #set up Azure stuff
 CONNECTION_STRING = os.environ.get("DB_CONNECTION_STRING")
-client = pymongo.MongoClient(CONNECTION_STRING)
+db_client = pymongo.MongoClient(CONNECTION_STRING)
 # Create database to hold cosmic works data
 # MongoDB will create the database if it does not exist
-db = client.cms_open
+db = db_client.cms_open
+st.session_state["db"] = db
 
 EMBEDDINGS_DEPLOYMENT_NAME = "text-embedding-3-small"
+st.session_state["EMBEDDINGS_DEPLOYMENT_NAME"] = EMBEDDINGS_DEPLOYMENT_NAME
 COMPLETIONS_DEPLOYMENT_NAME = "gpt-4"
+st.session_state["COMPLETIONS_DEPLOYMENT_NAME"] = COMPLETIONS_DEPLOYMENT_NAME
 AOAI_ENDPOINT = os.environ.get("AOAI_ENDPOINT")
 AOAI_KEY = os.environ.get("AOAI_KEY")
 AOAI_API_VERSION = "2024-02-01"
@@ -57,17 +56,16 @@ st.session_state["current_document_url"] = current_document_url
 st.sidebar.write("Current Document:", current_document)
 st.sidebar.link_button("Download Document", current_document_url)
 
-if 'client' not in st.session_state:
+if 'ai_client' not in st.session_state:
     #azure client
-    client = AzureOpenAI(
+    ai_client = AzureOpenAI(
     azure_endpoint = AOAI_ENDPOINT,
     api_version = AOAI_API_VERSION,
     api_key = AOAI_KEY
     )
-    st.session_state["client"] = client
+    st.session_state["ai_client"] = ai_client
 else:
-    client = st.session_state["client"]
-    #st.write("loaded client: ", client.api_key)
+    ai_client = st.session_state["ai_client"]
 
 #check if thread is already in state or empty (been reset)    
 if 'thread' not in st.session_state or st.session_state["thread"] == "":
@@ -78,32 +76,27 @@ if 'thread' not in st.session_state or st.session_state["thread"] == "":
 else:
     thread = st.session_state["thread"]
 
-st.session_state["system_message"] = message = "You are the Advocacy Assistant. You have extensive knowledge of healthcare policy."
+st.session_state["system_message"] = "You are the Advocacy Assistant. You have extensive knowledge of healthcare policy."
 
 #get summary intro message if it's not already here or if its empty (been reset)
 if 'intro_message' not in st.session_state or st.session_state["intro_message"] == "":
     #start with a simple message to get basic info and assure connection
-    #initial info message on thread
-    messages = [
-        {"role":"system","content":st.session_state["system_message"]},
-        {"role":"user", "content":"""What is the title of this document? 
-    Example response: 
-    '''**Title:** <document title>
-   """}
-    ]
+    #put initial info message on thread. The system message and RAG results will be put before this
+    question = """Write a short haiku about healthcare policy."""
 
-    completion = client.chat.completions.create(messages=messages, model=COMPLETIONS_DEPLOYMENT_NAME)
+    completion = rag_with_vector_search(question)
     
     # #filter for assistant messages
     # assistant_messages = [message for message in messages.data if message.role == "assistant"]
     # # save intro message
-    st.session_state["intro_message"] = completion.choices[0].message.content
+    st.session_state["intro_message"] = completion
 
 st.write("Welcome to the Advocacy Assistant! Let's get started.")
 st.write("Current Document:", current_document)
 st.write("Title:", document_title)
 st.write("Comment period:", comment_start, "to", comment_end)
 st.divider()
+st.write("A healthcare policy haiku:")
 st.write(st.session_state["intro_message"])
 st.divider()
 st.write("I can scan the document and help you find the information that is most relevant to you. Please provide some information about yourself and your interests.")
