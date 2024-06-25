@@ -27,8 +27,8 @@ def generate_embeddings(text: str):
     the vector index.
     '''
     client:AzureOpenAI = st.session_state["ai_client"]
-    deployment = st.session_state["EMBEDDINGS_DEPLOYMENT_NAME"]
-    response = client.embeddings.create(input=text, model=deployment)
+    embeddings_deployment = st.session_state["EMBEDDINGS_DEPLOYMENT_NAME"]
+    response = client.embeddings.create(input=text, model=embeddings_deployment)
     embeddings = response.data[0].embedding
     time.sleep(0.5) # rest period to avoid rate limiting on AOAI
     return embeddings
@@ -55,7 +55,6 @@ def vector_search(collection_name, query, num_results=3):
         {'$project': { 'similarityScore': { '$meta': 'searchScore' }, 'document' : '$$ROOT' } }
     ]
     results = collection.aggregate(pipeline)
-    st.session_state["debug"] = [result for result in results]
     return results
 
 def print_chunk_search_result(result):
@@ -66,13 +65,13 @@ def print_chunk_search_result(result):
     print(f"_id: {result['document']['_id']}\n")
 
 
-def rag_with_vector_search(question: str, num_results: int = 3):
+def rag_with_vector_search(question: str, num_results: int = 3, extra_prompt=""):
     """
     Use the RAG model to generate a prompt using vector search results based on the
     incoming question.  
     """
     ai_client = st.session_state["ai_client"]
-    deployment = st.session_state["COMPLETIONS_DEPLOYMENT_NAME"]
+    completions_deployment = st.session_state["COMPLETIONS_DEPLOYMENT_NAME"]
     # perform the vector search and build document chunk list
     results = vector_search("cms_open", question, num_results=num_results)
     chunk_list = ""
@@ -86,14 +85,20 @@ def rag_with_vector_search(question: str, num_results: int = 3):
 
     # prepare the LLM request
     #add on to the thread
-    st.session_state["thread"].append({"role": "user", "content": question})
+    st.session_state["thread"].append({"role": "user", "content": question+extra_prompt})
     # put the system message in the thread, then the rest of the thread
     messages = [
         {"role": "system", "content": formatted_prompt},
         *st.session_state["thread"]
     ]
 
-    completion = ai_client.chat.completions.create(messages=messages, model=deployment)
+    # #stick messages in debug for viewing
+    st.session_state["debug"] = [message for message in messages]
+    # #put question at front of debug
+    st.session_state["debug"].insert(0, question)
+
+
+    completion = ai_client.chat.completions.create(messages=messages, model=completions_deployment)
     #add to the thread
     st.session_state["thread"].append({"role":completion.choices[0].message.role, "content":completion.choices[0].message.content})
     return completion.choices[0].message.content

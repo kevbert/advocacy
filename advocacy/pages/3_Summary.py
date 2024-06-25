@@ -29,6 +29,7 @@ thread = st.session_state["thread"]
 
 st.write("User interest:", st.session_state["user_interest"])
 st.write("User role:", st.session_state["user_role"])
+st.write("User choice:", st.session_state["user_choice"])
 previous = st.button("Change")
 
 st.divider()
@@ -39,7 +40,7 @@ if 'guidance' not in st.session_state or st.session_state["guidance"] == "":
     #get AI response for user choice
     ai_prompt = f"{st.session_state['user_choice']}."
     specific_instructions = """
-Find the selected topic and prepare a summary including:
+Use the supplied materials and prepare a summary including:
 - **Proposed Changes:** Summarize the changes.
 - **Comment Source:** Origin of the comment (e.g., public submissions, surveys).
 - **Specific Issues Addressed:** Main issues mentioned.
@@ -47,12 +48,12 @@ Find the selected topic and prepare a summary including:
 - **Suggested Alternatives:** Alternative solutions or recommendations.
 - **Impact Statements:** How the changes would impact the commenters and their communities. Impacts on commenters should include time and effort required to comply with the changes.
 
-For each section, include a direct quote from the material. When including quotes from the document, ensure they are directly extracted. Do not paraphrase or generate quotes. If a direct quote cannot be found, clearly state that no direct quote is available.
+For each section, include a direct quote from the material. When including quotes, ensure they are directly extracted. Do not paraphrase or generate quotes. If a direct quote cannot be found, clearly state that no direct quote is available.
 
 Write everything at an 8th grade literacy level.
 """
     
-    completion = rag_with_vector_search(ai_prompt+specific_instructions)
+    completion = rag_with_vector_search(ai_prompt, 3, specific_instructions)
 
     # save guidance message
     st.session_state["guidance"] = completion
@@ -71,3 +72,6 @@ if next:
 # for debugging and monitoring
 st.divider()
 st.write(st.session_state["thread"])
+
+st.divider()
+st.write(st.session_state["debug"])

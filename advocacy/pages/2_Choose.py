@@ -43,7 +43,7 @@ Example: Diabetes Management: strategies for managing diabetes.
 Then, ask the user to select their topic of interest.
 """
 
-    completion = rag_with_vector_search(ai_prompt+specific_instructions)
+    completion = rag_with_vector_search(ai_prompt, 3, specific_instructions)
 
     # save disambuguation message
     st.session_state["dis_message"] = completion
@@ -53,7 +53,7 @@ st.write(st.session_state["dis_message"])
 if "user_choice" not in st.session_state:
     st.session_state["user_choice"] = ""
 
-user_choice = st.text_area("What area would you like to dig into?", st.session_state["user_choice"], height=100, placeholder="Nunmerical value of the area you are interested in or name an area")
+user_choice = st.text_area("What area would you like to dig into?", st.session_state["user_choice"], height=100, placeholder="Area you are interested in")
 
 next = st.button("Choose")
 
