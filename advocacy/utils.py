@@ -83,9 +83,12 @@ def rag_with_vector_search(question: str, num_results: int = 3):
     formatted_prompt = st.session_state["system_message"] + chunk_list
 
     # prepare the LLM request
+    #add on to the thread
+    st.session_state["thread"].append({"role": "user", "content": question})
+    # put the system message in the thread, then the rest of the thread
     messages = [
         {"role": "system", "content": formatted_prompt},
-        {"role": "user", "content": question}
+        *st.session_state["thread"]
     ]
 
     completion = ai_client.chat.completions.create(messages=messages, model=deployment)
