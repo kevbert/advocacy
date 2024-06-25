@@ -1,9 +1,11 @@
 import streamlit as st
-import openai
-import threading
 import time
+import os
+import json
+import pymongo
 
-from utils import run_thread
+from utils import reset_values, generate_embeddings, vector_search, print_chunk_search_result,rag_with_vector_search
+from openai import AzureOpenAI
 
 st.set_page_config(
     page_title="Summary",
@@ -12,7 +14,7 @@ st.set_page_config(
 
 st.markdown("# Summary")
 st.sidebar.header("Summary")
-st.logo("TextBotLogoSmall.jpeg")
+st.logo("CGLogoDNAsmall.png")
 
 st.divider()
 
@@ -31,13 +33,6 @@ st.write("User role:", st.session_state["user_role"])
 previous = st.button("Change")
 
 st.divider()
-
-# sample JSON containing agency, due date, and title
-# {
-#     "agency": "CMS",
-#     "due_date": "2022-12-01",
-#     "title": "Proposed Rule on Medicare Payment Policies"
-# }
 
 
 # get new guidance if it isn't already in session state or blank

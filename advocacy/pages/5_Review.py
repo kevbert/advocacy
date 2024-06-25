@@ -12,7 +12,7 @@ st.set_page_config(
 
 st.markdown("# Review")
 st.sidebar.header("Review")
-st.logo("TextBotLogoSmall.jpeg")
+st.logo("CGLogoDNAsmall.png")
 
 st.divider()
 

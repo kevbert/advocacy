@@ -14,7 +14,7 @@ st.set_page_config(
 
 st.markdown("# Choose")
 st.sidebar.header("Choose")
-st.logo("TextBotLogoSmall.jpeg")
+st.logo("CGLogoDNAsmall.png")
 
 st.divider()
 #display current materials
@@ -56,6 +56,9 @@ if "user_choice" not in st.session_state:
 user_choice = st.text_area("What area would you like to dig into?", st.session_state["user_choice"], height=100, placeholder="Nunmerical value of the area you are interested in or name an area")
 
 next = st.button("Choose")
+
+st.divider()
+st.write(st.session_state["thread"])
 
 if previous:
     st.switch_page("Home.py")

@@ -7,7 +7,7 @@ st.set_page_config(
 
 st.markdown("# Comment")
 st.sidebar.header("Comment")
-st.logo("TextBotLogoSmall.jpeg")
+st.logo("CGLogoDNAsmall.png")
 
 st.divider()
 
