@@ -3,8 +3,29 @@ from openai import OpenAI
 import threading
 import time
 import os
+import json
+import pymongo
 
-from utils import run_thread, reset_values
+from utils import run_thread, reset_values, generate_embeddings, vector_search, print_chunk_search_result
+from openai import AzureOpenAI
+from dotenv import load_dotenv
+from tenacity import retry, wait_random_exponential, stop_after_attempt
+
+from dotenv import load_dotenv
+load_dotenv()
+
+#set up Azure stuff
+CONNECTION_STRING = os.environ.get("DB_CONNECTION_STRING")
+client = pymongo.MongoClient(CONNECTION_STRING)
+# Create database to hold cosmic works data
+# MongoDB will create the database if it does not exist
+db = client.cms_open
+
+EMBEDDINGS_DEPLOYMENT_NAME = "text-embedding-3-small"
+COMPLETIONS_DEPLOYMENT_NAME = "gpt-4"
+AOAI_ENDPOINT = os.environ.get("AOAI_ENDPOINT")
+AOAI_KEY = os.environ.get("AOAI_KEY")
+AOAI_API_VERSION = "2024-02-01"
 
 st.set_page_config(
     page_title="Advocacy",
@@ -36,86 +57,54 @@ st.session_state["current_document_url"] = current_document_url
 st.sidebar.write("Current Document:", current_document)
 st.sidebar.link_button("Download Document", current_document_url)
 
-if 'api_key' not in st.session_state:
-    # get OPENAI_API_KEY from .env file
-    from dotenv import load_dotenv
-    load_dotenv()
-    #set up OpenAI API stuff
-    # Access the API key from the environment
-    api_key = os.getenv("ADVOCACY_OPENAI_API_KEY")
-    st.session_state["api_key"] = api_key
-    #st.write("new api key: ", api_key)
-else:
-    api_key = st.session_state["api_key"]
-    #st.write("loaded api key: ", api_key)
-
 if 'client' not in st.session_state:
-    #set up OpenAI API stuff
-    # Access the API key from the environment
-    api_key = os.getenv("ADVOCACY_OPENAI_API_KEY")
-    # connect to LLM Assistant API
-    client = OpenAI(api_key=api_key)
+    #azure client
+    client = AzureOpenAI(
+    azure_endpoint = AOAI_ENDPOINT,
+    api_version = AOAI_API_VERSION,
+    api_key = AOAI_KEY
+    )
     st.session_state["client"] = client
-    #st.write("new client: ", client.api_key)
 else:
     client = st.session_state["client"]
     #st.write("loaded client: ", client.api_key)
 
-if 'assistant' not in st.session_state:
-    #fetch assistant
-    assistant = client.beta.assistants.retrieve("asst_NKfcLtfzuj3uCPa1cDlNNlTy")   #gpt 4, temperature .1, Long original document
-    # assistant = client.beta.assistants.retrieve("asst_qM2xHQ1uBPocEnkpw3Jq4qhS")   #gpt 4, temperature .1, SNF document
-    st.session_state["assistant"] = assistant
-else:
-    assistant = st.session_state["assistant"]
-
 #check if thread is already in state or empty (been reset)    
 if 'thread' not in st.session_state or st.session_state["thread"] == "":
     #create a thread for this session
-    thread = client.beta.threads.create()
+    # in azure, a thread is just an array of messages
+    thread = []
     st.session_state["thread"] = thread
 else:
     thread = st.session_state["thread"]
+
+st.session_state["system_message"] = message = "You are the Advocacy Assistant. You have extensive knowledge of healthcare policy."
 
 #get summary intro message if it's not already here or if its empty (been reset)
 if 'intro_message' not in st.session_state or st.session_state["intro_message"] == "":
     #start with a simple message to get basic info and assure connection
     #initial info message on thread
-    message = client.beta.threads.messages.create(
-    thread_id=thread.id,
-    role="user",
-    content="""What is the title of this document? 
+    messages = [
+        {"role":"system","content":st.session_state["system_message"]},
+        {"role":"user", "content":"""What is the title of this document? 
     Example response: 
     '''**Title:** <document title>
-   """
+   """}
+    ]
 
-    #TODO: get title and due date from API rather than the LLM
-    )
-    # run thread on assistant
-    run = run_thread(thread.id, assistant.id, client)
-
-    # Poll for task completion
-    while run.status != "completed":
-        #show status in sidebar
-        st.sidebar.info(f"Task status: {run.status}")
-        time.sleep(1)  # Adjust polling interval as needed
-        #TODO: should check timeout and errors
-
-    st.sidebar.success("Assistant Connected")
-
-    messages = client.beta.threads.messages.list(thread_id=thread.id)
-    #filter for assistant messages
-    assistant_messages = [message for message in messages.data if message.role == "assistant"]
-    # save intro message
-    st.session_state["intro_message"] = assistant_messages[0]
-    #save last message id in session state
-    last_message_id = assistant_messages[0].id
-    st.session_state["last_message_id"] = last_message_id
+    completion = client.chat.completions.create(messages=messages, model=COMPLETIONS_DEPLOYMENT_NAME)
+    
+    # #filter for assistant messages
+    # assistant_messages = [message for message in messages.data if message.role == "assistant"]
+    # # save intro message
+    st.session_state["intro_message"] = completion.choices[0].message.content
 
 st.write("Welcome to the Advocacy Assistant! Let's get started.")
 st.write("Current Document:", current_document)
 st.write("Title:", document_title)
 st.write("Comment period:", comment_start, "to", comment_end)
+st.divider()
+st.write(st.session_state["intro_message"])
 st.divider()
 st.write("I can scan the document and help you find the information that is most relevant to you. Please provide some information about yourself and your interests.")
 
