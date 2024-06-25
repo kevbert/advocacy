@@ -1,4 +1,14 @@
 import streamlit as st
+import time
+import os
+import json
+import pymongo
+
+from utils import reset_values, generate_embeddings, vector_search, print_chunk_search_result,rag_with_vector_search
+from openai import AzureOpenAI
+
+def clear_text():
+    st.session_state["user_comment"] = ""
 
 st.set_page_config(
     page_title="Comment",
@@ -11,16 +21,18 @@ st.logo("CGLogoDNAsmall.png")
 
 st.divider()
 
-def clear_text():
-    st.session_state["user_comment"] = ""
-
 st.sidebar.write("Current Document: ", st.session_state["current_document"])
 st.sidebar.link_button("View Document", st.session_state["current_document_url"])
 
 st.divider()
 
-st.write("User role:", st.session_state["user_role"])
+# recover AI variables from state
+ai_client = st.session_state["ai_client"]
+thread = st.session_state["thread"]
 
+st.write("User interest:", st.session_state["user_interest"])
+st.write("User role:", st.session_state["user_role"])
+previous = st.button("Change")
 
 st.divider()
 
