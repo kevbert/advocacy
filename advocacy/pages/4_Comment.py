@@ -54,3 +54,7 @@ if previous:
 if next:
     st.session_state["user_comment"] = user_comment
     st.switch_page("pages/5_Review.py")
+
+# for debugging and monitoring
+st.divider()
+st.write(st.session_state["thread"])

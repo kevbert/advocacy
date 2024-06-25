@@ -57,7 +57,7 @@ Be respectful and professional
 st.write(st.session_state["review"])
 
 #textbox for revising comment
-st.text_area("Revise Comment", st.session_state["user_comment"], height=300)
+st.text_area("Revise Comment", st.session_state["user_comment"], height=200)
 
 previous = st.button("Cancel")
 next = st.button("Submit Comment")
@@ -67,3 +67,7 @@ if previous:
 
 if next:
     st.switch_page("pages/6_Submit.py")
+
+# for debugging and monitoring
+st.divider()
+st.write(st.session_state["thread"])
