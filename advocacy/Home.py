@@ -31,14 +31,10 @@ st.set_page_config(
     page_icon="🩺",
 )
 
-# put an image in top of the page, centered
-st.columns(3)[1].image("CGLogoDNA.png", width=200)
 
 st.logo("CGLogoDNAsmall.png")
 
-st.title("Advocacy Home")
-
-#these are currently mockups
+#these are currently mockups - should pull the real stuff
 ai_url = "https://openai.com"
 #could read these form Gov API
 current_document = "CMS-2024-0131-0001"
@@ -82,7 +78,7 @@ st.session_state["system_message"] = "You are the Advocacy Assistant. You have e
 if 'intro_message' not in st.session_state or st.session_state["intro_message"] == "":
     #start with a simple message to get basic info and assure connection
     #put initial info message on thread. The system message and RAG results will be put before this
-    question = """Write a short haiku about healthcare policy."""
+    question = """Write a short haiku about healthcare policy. Make sure to include line breaks to maintain the haiku structure."""
 
     completion = rag_with_vector_search(question)
     
@@ -91,13 +87,18 @@ if 'intro_message' not in st.session_state or st.session_state["intro_message"] 
     # # save intro message
     st.session_state["intro_message"] = completion
 
+# put an image in top of the page, centered
+with st.columns(3)[1]:
+    st.image("CGLogoDNA.png", width=200)
+    st.markdown(f":gray[*{st.session_state['intro_message']}*]")
+
+st.divider()
+st.title("Advocacy Home")
+
 st.write("Welcome to the Advocacy Assistant! Let's get started.")
 st.write("Current Document:", current_document)
 st.write("Title:", document_title)
 st.write("Comment period:", comment_start, "to", comment_end)
-st.divider()
-st.write("A healthcare policy haiku:")
-st.write(st.session_state["intro_message"])
 st.divider()
 st.write("I can scan the document and help you find the information that is most relevant to you. Please provide some information about yourself and your interests.")
 
