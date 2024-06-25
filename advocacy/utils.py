@@ -89,4 +89,6 @@ def rag_with_vector_search(question: str, num_results: int = 3):
     ]
 
     completion = ai_client.chat.completions.create(messages=messages, model=deployment)
+    #add to the thread
+    st.session_state["thread"].append(completion.choices[0].message)
     return completion.choices[0].message.content
