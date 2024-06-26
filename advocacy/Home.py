@@ -10,6 +10,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+st.session_state["REGULATIONS_API_KEY"] = os.environ.get("REGULATIONS_API_KEY")
+
 # spot to stick debug stuff
 st.session_state["debug"] = ""
 
@@ -50,10 +52,6 @@ document_title = "Medicare and Medicaid Programs and the Children’s Health Ins
 #set these in state
 st.session_state["current_document"] = current_document
 st.session_state["current_document_url"] = current_document_url
-
-#display current materials
-st.sidebar.write("Current Document:", current_document)
-st.sidebar.link_button("Download Document", current_document_url)
 
 if 'ai_client' not in st.session_state:
     #azure client
@@ -99,10 +97,13 @@ st.divider()
 st.title("Advocacy Home")
 
 st.write("Welcome to the Advocacy Assistant! Let's get started.")
-st.write("Current Document:", current_document)
-st.write("Title:", document_title)
-st.write("Comment period:", comment_start, "to", comment_end)
-st.divider()
+
+#display current materials
+st.sidebar.markdown("**Current Document:** "+current_document)
+st.sidebar.markdown("**Title:** "+document_title)
+st.sidebar.markdown("**Comment period:** "+comment_start+" to "+comment_end)
+st.sidebar.link_button("Download Document", current_document_url)
+
 st.write("I can scan the document and help you find the information that is most relevant to you. Please provide some information about yourself and your interests.")
 
 
@@ -134,5 +135,5 @@ reset = st.button("Reset")
 if reset:
     reset_values()
 
-st.divider()
-st.write(st.session_state["debug"])
+# st.divider()
+# st.write(st.session_state["debug"])

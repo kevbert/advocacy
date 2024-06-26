@@ -32,17 +32,29 @@ thread = st.session_state["thread"]
 
 st.write("User interest:", st.session_state["user_interest"])
 st.write("User role:", st.session_state["user_role"])
+st.write("User choice:", st.session_state["user_choice"])
 previous = st.button("Change")
 
 st.divider()
 
 st.write(f"{st.session_state.guidance}")
 
+st.divider()
+st.markdown(""":blue-background[Guidelines for making a comment  
+Read and understand the regulatory document you are commenting on  
+Feel free to reach out to the agency with questions  
+Be concise but support your claims  
+Base your justification on sound reasoning, scientific evidence, and/or how you will be impacted  
+Address trade-offs and opposing views in your comment  
+There is no minimum or maximum length for an effective comment  
+The comment process is not a vote – one well supported comment is often more influential than a thousand form letters  
+Be respectful and professional]""")
+
 if "user_comment" not in st.session_state:
     st.session_state["user_comment"] = ""
 
 clear = st.button("Clear", on_click=clear_text)
-user_comment = st.text_area("Write your comment here:", st.session_state["user_comment"], height=300, key="comment_box")
+user_comment = st.text_area("Write your comment here:", st.session_state["user_comment"], height=200, key="comment_box")
 
 previous = st.button("Cancel")
 next = st.button("Review Comment")
@@ -55,6 +67,6 @@ if next:
     st.session_state["user_comment"] = user_comment
     st.switch_page("pages/5_Review.py")
 
-# for debugging and monitoring
-st.divider()
-st.write(st.session_state["thread"])
+# # for debugging and monitoring
+# st.divider()
+# st.write(st.session_state["thread"])

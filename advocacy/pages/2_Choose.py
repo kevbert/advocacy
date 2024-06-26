@@ -69,5 +69,5 @@ if next:
     st.switch_page("pages/3_Summary.py")
 
 
-st.divider()
-st.write(st.session_state["debug"])
+# st.divider()
+# st.write(st.session_state["debug"])

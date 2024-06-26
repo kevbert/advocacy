@@ -14,7 +14,6 @@ def reset_values():
     st.session_state["guidance"] = ""
     st.session_state["comment"] = ""
     st.session_state["review"] = ""
-    st.session_state["last_message_id"] = ""
     st.session_state["thread"] = ""
     st.switch_page("Home.py")
 
@@ -109,7 +108,7 @@ def submit_comment(comment):
     headers = {
         "Content-Type": "application/json",
         "Accept": "application/json",
-        "X-Api-Key": "YOUR_API_KEY"}
+        "X-Api-Key": st.session_state["REGULATIONS_API_KEY"]}
     # GET the comment return - to activate this endpoint, we would use a POST with the comment
     response = requests.get(url, headers=headers)
     # return data.attributes.docketId

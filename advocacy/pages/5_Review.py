@@ -49,7 +49,7 @@ Be respectful and professional
     Your feedback:
     """
 
-    completion = rag_with_vector_search(specific_instructions)
+    completion = rag_with_vector_search(st.session_state["user_comment"],3,specific_instructions)
 
     # save review message
     st.session_state["review"] = completion
@@ -69,5 +69,5 @@ if next:
     st.switch_page("pages/6_Submit.py")
 
 # for debugging and monitoring
-st.divider()
-st.write(st.session_state["thread"])
+# st.divider()
+# st.write(st.session_state["thread"])

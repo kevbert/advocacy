@@ -59,6 +59,7 @@ Write everything at an 8th grade literacy level.
     st.session_state["guidance"] = completion
 
 st.write(st.session_state["guidance"])
+st.markdown(":blue-background[Would you like to make a comment?]")
 
 previous = st.button("Cancel")
 next = st.button("Make Comment")
@@ -70,8 +71,8 @@ if next:
     st.switch_page("pages/4_Comment.py")
 
 # for debugging and monitoring
-st.divider()
-st.write(st.session_state["thread"])
+# st.divider()
+# st.write(st.session_state["thread"])
 
-st.divider()
-st.write(st.session_state["debug"])
+# st.divider()
+# st.write(st.session_state["debug"])
