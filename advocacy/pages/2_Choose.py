@@ -57,9 +57,6 @@ user_choice = st.text_area("What area would you like to dig into?", st.session_s
 
 next = st.button("Choose")
 
-st.divider()
-st.write(st.session_state["thread"])
-
 if previous:
     st.switch_page("Home.py")
 
@@ -68,6 +65,8 @@ if next:
     st.session_state["guidance"] = ""
     st.switch_page("pages/3_Summary.py")
 
+# st.divider()
+# st.write(st.session_state["thread"])
 
 # st.divider()
 # st.write(st.session_state["debug"])

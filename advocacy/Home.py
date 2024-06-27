@@ -25,7 +25,7 @@ st.session_state["db"] = db
 
 EMBEDDINGS_DEPLOYMENT_NAME = "text-embedding-3-small"
 st.session_state["EMBEDDINGS_DEPLOYMENT_NAME"] = EMBEDDINGS_DEPLOYMENT_NAME
-COMPLETIONS_DEPLOYMENT_NAME = "gpt-4"
+COMPLETIONS_DEPLOYMENT_NAME = "gpt-4-32k"
 st.session_state["COMPLETIONS_DEPLOYMENT_NAME"] = COMPLETIONS_DEPLOYMENT_NAME
 AOAI_ENDPOINT = os.environ.get("AOAI_ENDPOINT")
 AOAI_KEY = os.environ.get("AOAI_KEY")
@@ -128,6 +128,7 @@ if go_ai:
     st.session_state["user_role"] = user_role
     # erase the next variable so they can be reloaded
     st.session_state["dis_message"] = ""
+    st.session_state["user_choice"] = ""
     st.switch_page("pages/2_Choose.py")
 
 #a reset button that erases state for user_interest, user_role, intro_message, and last_message_id

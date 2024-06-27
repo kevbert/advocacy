@@ -40,20 +40,52 @@ if 'guidance' not in st.session_state or st.session_state["guidance"] == "":
     #get AI response for user choice
     ai_prompt = f"{st.session_state['user_choice']}."
     specific_instructions = """
-Use the supplied materials and prepare a summary including:
-- **Proposed Changes:** Summarize the changes.
-- **Comment Source:** Origin of the comment (e.g., public submissions, surveys).
-- **Specific Issues Addressed:** Main issues mentioned.
-- **Evidence and Data:** Data or expert opinions supporting the comment.
-- **Suggested Alternatives:** Alternative solutions or recommendations.
-- **Impact Statements:** How the changes would impact the commenters and their communities. Impacts on commenters should include time and effort required to comply with the changes.
+Summarize the relevant information in simple, clear language suitable for a general audience (8th grade reading level). 
+Include ONLY information from the sources.
+Include the following sections:
 
-For each section, include a direct quote from the material. When including quotes, ensure they are directly extracted. Do not paraphrase or generate quotes. If a direct quote cannot be found, clearly state that no direct quote is available.
+**Current Policy**
+    Briefly explain the current policy (2-3 sentences)
 
-Write everything at an 8th grade literacy level.
+**Proposed Changes**
+    Summarize the proposed changes (3-5 bullet points)
+
+    Include a direct quote detailing the main change (up to 50 words)
+
+**Key Issues and Impacts**
+    List 3-5 main issues addressed by the policy
+    Describe potential impacts on patients, healthcare providers, and the healthcare system
+    Include a direct quote about a significant impact (up to 50 words)
+
+**Evidence and Expert Opinions**
+Summarize key data or statistics supporting the policy (1-2 bullet points)
+
+**Alternative Proposals**
+If available, briefly describe 1-2 alternative solutions
+
+**Impact on Patients**
+Explain how the policy will affect patients (1-2 sentences)
+
+**Impact and Burden on Healthcare Providers**
+Describe how the policy will impact healthcare providers (1-2 sentences)
+
+**Next Steps**
+Explain how readers can provide feedback on the policy (1-2 sentences)
+
+
+
+Guidelines:
+
+Use simple language and explain any technical terms
+Include direct quotes where specified; do not paraphrase or generate quotes
+Clearly state if a direct quote is unavailable for any section
+Maintain accuracy while simplifying complex concepts
+Focus on information relevant to patients, doctors, advocates, and researchers
+Cite the source document for all information and quotes
 """
+
     
-    completion = rag_with_vector_search(ai_prompt, 3, specific_instructions)
+    completion = rag_with_vector_search(ai_prompt, 6, specific_instructions)
 
     # save guidance message
     st.session_state["guidance"] = completion
@@ -74,5 +106,5 @@ if next:
 # st.divider()
 # st.write(st.session_state["thread"])
 
-# st.divider()
-# st.write(st.session_state["debug"])
+st.divider()
+st.write(st.session_state["debug"])
